@@ -28,11 +28,18 @@ from forensic1394.errors import process_result
 # Try to find the forensic1394 shared library
 loc = find_library("forensic1394")
 
-if loc is None:
-    raise ImportError
-
+lib = None
 # Open up the library
-lib = cdll.LoadLibrary(loc)
+if loc:
+    lib = cdll.LoadLibrary(loc)
+
+# Try opening the library using its the generic name
+# (e.g. when using LD_LIBRARY_PATH)
+if lib is None:
+    lib = cdll.LoadLibrary("libforensic1394.so")
+
+if lib is None:
+    raise ImportError
 
 # Opaque bus and device pointers
 class busptr(c_void_p):
